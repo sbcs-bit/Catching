@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Catch the Ball Game</title>
+    <style>
+  
+        /* Ball */
+        #circle {
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            border-radius: 50%;
+            position: absolute;
+        }
+        /* Bar */
+        #bar {
+            width: 120px;
+            height: 20px;
+            background-color: red;
+            position: absolute;
+            bottom: 20px;
+        }
+        /* Score */
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 25px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="circle"></div>
+    <div id="bar"></div>
+    <div id="score">Score: 0</div>
+
+    <script>
+        // Get elements
+        let circle = document.getElementById("circle");
+        let bar = document.getElementById("bar");
+        let scoreText = document.getElementById("score");
+        // -------------------------
+        // Ball variables
+        // -------------------------
+        let ballSize = 50;
+        let x = Math.random() * (window.innerWidth - ballSize);
+        let y = 0;
+        let d = 5;
+        // -------------------------
+        // Bar variables
+        // -------------------------
+        let barWidth = 120;
+        let barX = window.innerWidth / 2 - barWidth / 2;
+        let barSpeed = 20;
+        // -------------------------
+        // Score
+        // -------------------------
+        let score = 0;
+        // Set initial position
+        circle.style.left = x + "px";
+        circle.style.top = y + "px";
+        bar.style.left = barX + "px";
+        // -------------------------
+        // Generate random X
+        // -------------------------
+        function randomBallPosition() {
+            x = Math.random() * (window.innerWidth - ballSize);
+            circle.style.left = x + "px";
+        }
+        // -------------------------
+        // Reset ball
+        // -------------------------
+        function resetBall() {
+            y = 0;
+            randomBallPosition();
+            circle.style.top = y + "px";
+        }
+        // -------------------------
+        // Ball falling
+        // -------------------------
+        function fall() {
+            y += d;
+            circle.style.top = y + "px";
+            // Get positions
+            let c = circle.getBoundingClientRect();
+            let b = bar.getBoundingClientRect();
+            // -------------------------
+            // Collision detection
+            // -------------------------
+            if (
+                c.bottom >= b.top &&
+                c.top <= b.bottom &&
+                c.right >= b.left &&
+                c.left <= b.right
+            ) {
+                // Add point
+                score++;
+                scoreText.textContent = "Score: " + score;
+                // Reset ball with new X
+                resetBall();
+            }
+            // -------------------------
+            // Ball missed
+            // -------------------------
+            if (y > window.innerHeight) {
+                resetBall();
+            }
+        }
+        // Ball movement
+        setInterval(fall, 30);
+        // -------------------------
+        // Keyboard control
+        // -------------------------
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "ArrowLeft") {
+               barX = barX - barSpeed;
+            }
+            if (event.key === "ArrowRight") {
+                barX = barX + barSpeed;
+            }
+            // Left boundary
+            if (barX < 0) {
+                barX = 0;
+            }
+            // Right boundary
+            if (barX > window.innerWidth - barWidth) {
+                barX = window.innerWidth - barWidth;
+            }
+            // Update bar
+            bar.style.left = barX + "px";
+        });
+    </script>
+</body>
+</html>
